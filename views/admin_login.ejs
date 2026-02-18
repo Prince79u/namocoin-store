@@ -1,0 +1,29 @@
+<%- include("layout", { body: `
+  <div class="pageHead">
+    <div>
+      <h2 class="h2">Admin Login</h2>
+      <div class="muted">Only authorized staff can access the dashboard.</div>
+    </div>
+  </div>
+
+  <div class="card formCard">
+    <form method="POST" action="/admin/login" class="formGrid">
+      <div class="field">
+        <label>Admin Email</label>
+        <input name="email" type="email" placeholder="admin@namoverse.com" required />
+      </div>
+
+      <div class="field">
+        <label>Admin Password</label>
+        <input name="password" type="password" placeholder="••••••••" required />
+      </div>
+
+      <div class="actionsRow">
+        <button class="btn btnPrimary" type="submit">Login</button>
+        <a class="btn btnGhost" href="/">Back to Home</a>
+      </div>
+
+      ${error ? `<div class="alert error">${error}</div>` : ``}
+    </form>
+  </div>
+` }) %>

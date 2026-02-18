@@ -1,0 +1,48 @@
+<%- include("layout", { body: `
+  <div class="card">
+    <h2>Pay with Google Pay (UPI)</h2>
+    <p class="muted">Order: <b>${order.orderNo}</b></p>
+
+    <div class="card" style="margin-top:12px;">
+      <div><b>Amount:</b> ₹${order.priceINR}</div>
+      <div><b>Coins:</b> ${order.coins} NamoCoins</div>
+      <div><b>Pack:</b> ${order.product.name}</div>
+      <div class="muted" style="margin-top:8px;">
+        Pay exactly ₹${order.priceINR} and write note/remark: <b>${order.orderNo}</b>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <h3>Pay To</h3>
+      <div><b>UPI ID:</b> ${upiId}</div>
+      <div><b>Name:</b> ${payeeName}</div>
+    </div>
+
+    <div class="card" style="margin-top:12px;text-align:center;">
+      <h3>Scan QR to Pay</h3>
+      <img src="${qrImagePath}" 
+           alt="UPI QR Code"
+           style="max-width:260px;width:100%;border-radius:14px;border:1px solid rgba(255,255,255,.15);" />
+      <div class="muted" style="margin-top:8px;">
+        Scan using Google Pay / PhonePe / Paytm
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <h3>Upload Payment Screenshot</h3>
+      <form method="POST" action="/pay-upi/${order.id}/upload" enctype="multipart/form-data" class="form">
+        <label>UPI Transaction ID (optional)</label>
+        <input name="upiTxnId" type="text" placeholder="Eg: 1234567890" />
+
+        <label>Payment Screenshot (PNG/JPG)</label>
+        <input name="proof" type="file" accept="image/*" required />
+
+        <button class="btn btnPrimary" type="submit">Submit for Verification</button>
+      </form>
+    </div>
+
+    <div class="note">
+      Your order will be marked <b>PAID</b> after admin verification.
+    </div>
+  </div>
+` }) %>

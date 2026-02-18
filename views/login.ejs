@@ -1,0 +1,33 @@
+ <%- include("layout", { body: `
+  <div class="pageHead">
+    <div>
+      <h2 class="h2">Login</h2>
+      <div class="muted">Access your account and buy NamoCoins.</div>
+    </div>
+  </div>
+
+  <div class="card formCard">
+    <form method="POST" action="/login" class="formGrid">
+      <div class="field">
+        <label>Name or Email</label>
+        <input class="input" name="identifier" type="text" placeholder="Enter your name or email" required />
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input class="input" name="password" type="password" placeholder="••••••••" required />
+      </div>
+
+      <div class="actionsRow">
+        <button class="btn btnPrimary" type="submit">Login</button>
+        <a class="btn btnGhost" href="/register">Create Account</a>
+      </div>
+      <div class="tiny" style="margin-top:10px;">
+  <a class="link" href="/forgot-password">Forgot Password?</a>
+</div>
+
+
+      ${error ? `<div class="alert error">${error}</div>` : ``}
+    </form>
+  </div>
+` }) %>

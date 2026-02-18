@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  name              String
+  minecraftUsername String
+  phone             String
+  passwordHash      String
+  coinBalance       Int      @default(0)
+  createdAt         DateTime @default(now())
+  orders            Order[]
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  sku       String   @unique
+  name      String
+  priceINR  Int
+  coins     Int
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Order {
+  id             String   @id @default(cuid())
+  orderNo         String   @unique
+  userId          String
+  productId       String
+  priceINR        Int
+  coins           Int
+  status          String   @default("CREATED") // CREATED, PENDING_VERIFICATION, PAID, REJECTED
+  createdAt       DateTime @default(now())
+
+  paymentMethod   String?  // UPI_GPAY
+  upiTxnId        String?  // optional
+  paymentProofUrl String?  // /uploads/...
+
+  user            User     @relation(fields: [userId], references: [id])
+  product         Product  @relation(fields: [productId], references: [id])
+}
+
+model Setting {
+  key      String @id
+  intValue Int?
+}

@@ -1,0 +1,260 @@
+ <%
+  const _coinRate = (typeof coinRate !== "undefined" && coinRate) ? coinRate : 9;
+  const _orders = Array.isArray(orders) ? orders : [];
+  const _products = Array.isArray(products) ? products : [];
+%>
+
+<%- include("layout", { body: `
+  <div class="container">
+
+    <div class="adminTop">
+      <div>
+        <h2 class="adminTitle">Admin Dashboard</h2>
+        <div class="adminSub">Verify UPI payments and credit coins. Mark PAID to auto-send invoice.</div>
+      </div>
+
+      <div class="adminTools">
+        <div class="searchBox">
+          🔎
+          <input id="search" type="text" placeholder="Search order / email / mc username..." />
+        </div>
+
+        <select id="statusFilter" class="select">
+          <option value="ALL">All Status</option>
+          <option value="PENDING_VERIFICATION">Pending</option>
+          <option value="PAID">Paid</option>
+          <option value="REJECTED">Rejected</option>
+          <option value="CREATED">Created</option>
+        </select>
+
+        <form action="/admin/logout" method="POST">
+          <button class="btn btnGhost btnSmall" type="submit">Logout</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ✅ SETTINGS + PRODUCTS (TOP) -->
+    <div class="section" style="margin-top:14px;">
+      <div class="sectionHead">
+        <h3 class="h2" style="font-size:20px;">Settings</h3>
+        <div class="muted">Change conversion rate anytime. Shop UI will auto-use it.</div>
+      </div>
+
+      <div class="feature" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+        <form method="POST" action="/admin/settings/rate" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+          <div class="field" style="min-width:260px;">
+            <label>Conversion Rate</label>
+            <input class="input" type="number" step="1" min="1" name="rate"
+              value="${_coinRate}" required />
+            <div class="tiny">Example: 9 means <b>1 INR = 9 NamoCoins</b></div>
+          </div>
+
+          <label class="chip" style="cursor:pointer;">
+            <input type="checkbox" name="recalc" value="1" />
+            Recalculate ALL packs
+          </label>
+
+          <button class="btn btnPrimary btnSmall" type="submit">Save Rate</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="section" style="margin-top:14px;">
+      <div class="sectionHead">
+        <h3 class="h2" style="font-size:20px;">Products</h3>
+        <div class="muted">Edit price/coins/best-seller/active from here.</div>
+      </div>
+
+      <div class="ordersGrid">
+        ${_products.map(p => `
+          <div class="orderCard">
+            <div class="orderTop">
+              <div class="orderNo">${p.name}</div>
+              <span class="statusBadge ${p.active ? "sPaid" : "sRejected"}">
+                ${p.active ? "ACTIVE" : "DISABLED"}
+              </span>
+            </div>
+
+            <div class="orderMid">
+              <div class="orderItem">
+                <div class="tiny">Price (INR)</div>
+                <div class="strong">₹${p.priceINR}</div>
+              </div>
+              <div class="orderItem">
+                <div class="tiny">Coins</div>
+                <div class="strong">${p.coins}</div>
+              </div>
+              <div class="orderItem">
+                <div class="tiny">Best Seller</div>
+                <div class="strong">${p.bestSeller ? "YES" : "NO"}</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <form class="formGrid" method="POST" action="/admin/product/${p.id}">
+              <div class="field">
+                <label>Pack Name</label>
+                <input class="input" name="name" value="${p.name}" required />
+              </div>
+
+              <div class="field">
+                <label>Price INR</label>
+                <input class="input" type="number" name="priceINR" value="${p.priceINR}" required />
+              </div>
+
+              <div class="field">
+                <label>Coins</label>
+                <input class="input" type="number" name="coins" value="${p.coins}" required />
+              </div>
+
+              <div class="actionsRow">
+                <label class="chip" style="cursor:pointer;">
+                  <input type="checkbox" name="bestSeller" ${p.bestSeller ? "checked" : ""} />
+                  Best Seller
+                </label>
+
+                <label class="chip" style="cursor:pointer;">
+                  <input type="checkbox" name="active" ${p.active ? "checked" : ""} />
+                  Active
+                </label>
+
+                <button class="btn btnPrimary btnSmall" type="submit">Save</button>
+
+                <button class="btn btnGhost btnSmall" type="submit" formaction="/admin/product/${p.id}/recalc">
+                  Recalculate coins by rate
+                </button>
+              </div>
+
+              <div class="tiny">
+                Recalculate uses current rate: <b>1 INR = ${_coinRate}</b>
+              </div>
+            </form>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <!-- ✅ ORDERS -->
+    <div class="section" style="margin-top:18px;">
+      <div class="sectionHead">
+        <h3 class="h2" style="font-size:20px;">Orders</h3>
+        <div class="muted">Search + filter orders below.</div>
+      </div>
+
+      <div class="tableWrap">
+        <table class="table" id="ordersTable">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>User</th>
+              <th>Pack</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${_orders.map(o => {
+              const st = o.status || "CREATED";
+              const cls =
+                st === "PAID" ? "paid" :
+                st === "PENDING_VERIFICATION" ? "pending" :
+                st === "REJECTED" ? "rejected" :
+                "created";
+
+              const proof = o.paymentProofUrl
+                ? `<a class="proofLink" href="${o.paymentProofUrl}" target="_blank" rel="noreferrer">View</a>`
+                : `<span class="smallMuted">Not uploaded</span>`;
+
+              return `
+                <tr class="row"
+                  data-status="${st}"
+                  data-search="${(o.orderNo + ' ' + o.user.email + ' ' + o.user.name + ' ' + o.user.minecraftUsername + ' ' + (o.upiTxnId||'')).toLowerCase()}">
+
+                  <td>
+                    <div class="kv">
+                      <div class="v mono">${o.orderNo}</div>
+                      <div class="k">${new Date(o.createdAt).toLocaleString("en-IN")}</div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="kv">
+                      <div class="v">${o.user.name}</div>
+                      <div class="k">${o.user.email}</div>
+                      <div class="k">MC: <span class="mono">${o.user.minecraftUsername}</span></div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="kv">
+                      <div class="v">${o.product?.name || "NamoCoins Pack"}</div>
+                      <div class="k">₹${o.priceINR} • <b>${o.coins}</b> coins</div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="kv">
+                      <div class="k">Method</div>
+                      <div class="v">${o.paymentMethod || "UPI_GPAY"}</div>
+
+                      <div class="k">Txn ID</div>
+                      <div class="v mono">${o.upiTxnId ? o.upiTxnId : "-"}</div>
+
+                      <div class="k">Proof</div>
+                      <div class="v">${proof}</div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="pillSm ${cls}">${st.replaceAll("_"," ")}</span>
+                  </td>
+
+                  <td>
+                    <form class="inlineForm" method="POST" action="/admin/order/${o.id}/status">
+                      <select name="status" class="select">
+                        <option value="CREATED" ${st==="CREATED"?"selected":""}>CREATED</option>
+                        <option value="PENDING_VERIFICATION" ${st==="PENDING_VERIFICATION"?"selected":""}>PENDING</option>
+                        <option value="PAID" ${st==="PAID"?"selected":""}>PAID</option>
+                        <option value="REJECTED" ${st==="REJECTED"?"selected":""}>REJECTED</option>
+                      </select>
+
+                      <button class="btn btnPrimary btnSmall" type="submit">Update</button>
+                    </form>
+
+                    <div class="smallMuted" style="margin-top:8px;">
+                      PAID → coins added + invoice email
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const search = document.getElementById("search");
+    const statusFilter = document.getElementById("statusFilter");
+    const rows = Array.from(document.querySelectorAll("#ordersTable .row"));
+
+    function applyFilters(){
+      const q = (search.value || "").trim().toLowerCase();
+      const st = statusFilter.value;
+
+      rows.forEach(r => {
+        const okSearch = r.dataset.search.includes(q);
+        const okStatus = (st === "ALL") || (r.dataset.status === st);
+        r.style.display = (okSearch && okStatus) ? "" : "none";
+      });
+    }
+
+    search.addEventListener("input", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+  </script>
+` }) %>

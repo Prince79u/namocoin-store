@@ -1,0 +1,49 @@
+ <%
+  const _coinRate = (typeof coinRate !== "undefined" && coinRate) ? coinRate : 9;
+  const _products = Array.isArray(products) ? products : [];
+%>
+
+<%- include("layout", { body: `
+  <div class="pageHead">
+    <div>
+      <h2 class="h2">NamoCoins Shop</h2>
+      <div class="muted">Pick a pack and top-up your balance after verification.</div>
+    </div>
+    <div class="rateBadge"><b>1 INR = ${_coinRate} NamoCoins</b></div>
+  </div>
+
+  <div class="packs">
+    ${_products.map((p) => {
+      const isBest = !!(p.bestSeller || p.isBestSeller || p.popular);
+      const cardClass = isBest ? "packCard popular" : "packCard";
+
+      return `
+        <div class="${cardClass}">
+          ${isBest ? `<div class="bestSeller">Best Seller</div>` : ""}
+
+          <div class="packHeader">
+            <div class="packTitle">${p.name}</div>
+            <div class="packPrice">₹${p.priceINR}</div>
+          </div>
+
+          <div class="coinLine">
+            <div class="coinBadge">🪙</div>
+            <div>
+              <div class="coinBig">${p.coins} NamoCoins</div>
+              <div class="tiny">Credited after admin verification</div>
+            </div>
+          </div>
+
+          <div class="packActions">
+            <form method="POST" action="/buy/${p.id}">
+              <button class="btn btnPrimary full" type="submit">Buy Now</button>
+            </form>
+            <div class="tiny" style="margin-top:10px;">
+              UPI (GPay/PhonePe/Paytm) • Screenshot proof
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("")}
+  </div>
+` }) %>

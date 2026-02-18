@@ -1,0 +1,76 @@
+ <%- include("layout", { body: `
+  <section class="hero">
+    <div class="heroMedia" aria-hidden="true">
+      <img src="/assets/hero.png" class="heroImg" alt="" />
+      <div class="heroOverlay"></div>
+    </div>
+
+    <div class="heroGrid">
+      <div class="heroLeft">
+        <div class="kicker">WELCOME TO</div>
+        <h1 class="h1">NamoVerse Coin Store</h1>
+        <p class="lead">
+          Buy <b>NamoCoins</b> safely using UPI (GPay/PhonePe/Paytm). Upload screenshot → verification → coins credited.
+        </p>
+
+        <div class="ctaRow">
+          ${user ? `<a class="btn btnPrimary" href="/shop">Open Shop</a>` : `<a class="btn btnPrimary" href="/register">Create Account</a>`}
+          <a class="btn btnGhost" href="/shop">View Packs</a>
+        </div>
+
+        <div class="trustRow">
+          <div class="trustCard">✅ Secure login</div>
+          <div class="trustCard">📧 Email invoice</div>
+          <div class="trustCard">🪙 Coin balance</div>
+          <div class="trustCard">🛡️ Admin verification</div>
+        </div>
+      </div>
+
+      <div class="heroRight">
+        <div class="mascotCard">
+          <img src="/assets/mascot.png" class="mascot" alt="NamoVerse Mascot" />
+          <div class="mascotGlow"></div>
+        </div>
+
+        <div class="infoCard">
+          <div class="infoTitle">1 INR = 9 NamoCoins</div>
+          <div class="muted">Choose a pack, pay by UPI, upload screenshot and receive confirmation.</div>
+
+          <div class="miniSteps">
+            <div class="stepItem"><span class="stepNo">1</span> Register</div>
+            <div class="stepItem"><span class="stepNo">2</span> Buy pack</div>
+            <div class="stepItem"><span class="stepNo">3</span> Pay UPI</div>
+            <div class="stepItem"><span class="stepNo">4</span> Upload proof</div>
+            <div class="stepItem"><span class="stepNo">5</span> Admin verifies</div>
+            <div class="stepItem"><span class="stepNo">6</span> Coins added</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead">
+      <h2 class="h2">Why NamoVerse?</h2>
+      <p class="muted">Professional checkout flow for a Minecraft server store.</p>
+    </div>
+
+    <div class="grid3">
+      <div class="feature">
+        <div class="featureIcon">⚡</div>
+        <div class="featureTitle">Fast verification</div>
+        <div class="muted">Upload screenshot, admin verifies quickly.</div>
+      </div>
+      <div class="feature">
+        <div class="featureIcon">🧾</div>
+        <div class="featureTitle">Invoice email</div>
+        <div class="muted">Automatic invoice when marked PAID.</div>
+      </div>
+      <div class="feature">
+        <div class="featureIcon">🪙</div>
+        <div class="featureTitle">Balance system</div>
+        <div class="muted">Coins stored safely in your account.</div>
+      </div>
+    </div>
+  </section>
+` }) %>

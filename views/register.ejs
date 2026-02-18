@@ -1,0 +1,53 @@
+ <%- include("layout", { body: `
+  <div class="pageHead">
+    <div>
+      <h2 class="h2">Create account</h2>
+      <div class="muted">Join NamoVerse to buy NamoCoins safely via UPI.</div>
+    </div>
+  </div>
+
+  <div class="card formCard">
+    <form method="POST" action="/register" class="formGrid" autocomplete="on">
+      <div class="field">
+        <label>Email</label>
+        <input class="input" name="email" type="email" placeholder="you@gmail.com" required />
+      </div>
+
+      <div class="field">
+        <label>Name</label>
+        <input class="input" name="name" type="text" placeholder="Your name" required />
+      </div>
+
+      <div class="field">
+        <label>Minecraft Username</label>
+        <input class="input" name="minecraftUsername" type="text" placeholder="Your Minecraft username" required />
+      </div>
+
+      <div class="field">
+        <label>Phone</label>
+        <input class="input" name="phone" type="tel" inputmode="numeric" placeholder="10-digit number" required />
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input class="input" name="password" type="password" placeholder="••••••••" minlength="6" required />
+      </div>
+
+      <div class="field">
+        <label>Confirm Password</label>
+        <input class="input" name="confirmPassword" type="password" placeholder="Re-enter password" minlength="6" required />
+      </div>
+
+      <div class="actionsRow">
+        <button class="btn btnPrimary" type="submit">Create Account</button>
+        <a class="btn btnGhost" href="/login">Already have an account?</a>
+      </div>
+
+      ${error ? `<div class="alert error">${error}</div>` : ``}
+
+      <div class="tiny" style="margin-top:6px">
+        Payments are verified by admin before coins are credited.
+      </div>
+    </form>
+  </div>
+` }) %>

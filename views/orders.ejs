@@ -1,0 +1,76 @@
+ <%- include("layout", { body: `
+  <div class="pageHead">
+    <div>
+      <h2 class="h2">Your Orders</h2>
+      <div class="muted">Track your purchases and verification status.</div>
+    </div>
+    <a class="btn btnGhost" href="/shop">Back to Shop</a>
+  </div>
+
+  ${orders.length === 0 ? `
+    <div class="card">
+      <div class="muted">No orders yet. Go to the shop to buy NamoCoins.</div>
+    </div>
+  ` : `
+    <div class="ordersGrid">
+      ${orders.map(o => {
+        const status = o.status || "CREATED";
+        const badgeClass =
+          status === "PAID" ? "sPaid" :
+          status === "REJECTED" ? "sRejected" :
+          status === "PENDING_VERIFICATION" ? "sPending" :
+          "sCreated";
+
+        const proof = o.paymentProofUrl
+          ? `<a class="link" href="${o.paymentProofUrl}" target="_blank" rel="noreferrer">View proof</a>`
+          : `<span class="muted tiny">Not uploaded</span>`;
+
+        return `
+          <div class="orderCard">
+            <div class="orderTop">
+              <div>
+                <div class="orderNo">${o.orderNo}</div>
+                <div class="muted tiny">${new Date(o.createdAt).toLocaleString("en-IN")}</div>
+              </div>
+              <div class="statusBadge ${badgeClass}">${status.replaceAll("_"," ")}</div>
+            </div>
+
+            <div class="orderMid">
+              <div class="orderItem">
+                <div class="muted tiny">Pack</div>
+                <div class="strong">${o.product?.name || "NamoCoins Pack"}</div>
+              </div>
+              <div class="orderItem">
+                <div class="muted tiny">Amount</div>
+                <div class="strong">₹${o.priceINR}</div>
+              </div>
+              <div class="orderItem">
+                <div class="muted tiny">Coins</div>
+                <div class="strong">${o.coins} NamoCoins</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="orderBottom">
+              <div class="bottomRow">
+                <div class="muted tiny">Transaction ID</div>
+                <div class="strong">${o.upiTxnId ? o.upiTxnId : "-"}</div>
+              </div>
+              <div class="bottomRow">
+                <div class="muted tiny">Payment Proof</div>
+                <div>${proof}</div>
+              </div>
+            </div>
+
+            ${status === "PENDING_VERIFICATION" && !o.paymentProofUrl ? `
+              <div class="alert warn" style="margin-top:12px;">
+                Upload your screenshot from the payment page to get verified.
+              </div>
+            ` : ``}
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `}
+` }) %>

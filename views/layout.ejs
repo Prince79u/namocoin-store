@@ -1,0 +1,97 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NamoVerse • NamoCoins Store</title>
+  <link rel="icon" href="/assets/logo.png" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="bgGlow"></div>
+  <div class="bgParticles"></div>
+
+  <header class="topbar">
+    <div class="topbarInner">
+      <a class="brand" href="/">
+        <img class="brandLogo" src="/assets/logo.png" alt="NamoVerse Logo" />
+        <div class="brandText">
+          <div class="brandName">NamoVerse</div>
+          <div class="brandTag">Official Minecraft Store • NamoCoins</div>
+        </div>
+      </a>
+
+      <nav class="nav">
+        <a href="/">Home</a>
+        <% if (user) { %>
+          <a href="/shop">Shop</a>
+          <a href="/orders">Orders</a>
+          <form action="/logout" method="POST" class="inline">
+            <button class="linkbtn" type="submit">Logout</button>
+          </form>
+        <% } else { %>
+          <a href="/login">Login</a>
+          <a class="btn btnSmall" href="/register">Register</a>
+        <% } %>
+        <a class="btn btnSmall btnGhost" href="/admin/login">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <% if (user) { %>
+      <div class="statusRow">
+        <div class="chip">
+          <span class="dot dotLive"></span>
+          Logged in as <b><%= user.name %></b>
+        </div>
+        <div class="chip">
+          🪙 Balance: <b><%= user.coinBalance || 0 %></b> NamoCoins
+        </div>
+      </div>
+    <% } %>
+
+    <%- body %>
+  </main>
+
+  <footer class="footer">
+    <div class="footerInner">
+      <div class="footerLeft">
+        <img class="footerLogo" src="/assets/logo.png" alt="NamoVerse" />
+        <div>
+          <div class="footerTitle">NamoVerse</div>
+          <div class="muted">Secure UPI verification • Instant email invoice</div>
+        </div>
+      </div>
+
+      <div class="muted">
+        © <%= new Date().getFullYear() %> NamoVerse • Not affiliated with Mojang/Microsoft
+      </div>
+    </div>
+  </footer>
+  <footer style="
+  margin-top:60px;
+  padding:20px 0;
+  text-align:center;
+  font-size:14px;
+  color:#aaa;
+  border-top:1px solid rgba(255,255,255,0.08);
+">
+
+  <div style="margin-bottom:6px;">
+    Join our Discord:
+    <a href="https://discord.gg/K6BseFJT"
+       target="_blank"
+       style="color:#7c5cff;font-weight:600;text-decoration:none;">
+       Click Here
+    </a>
+  </div>
+
+  <div style="opacity:.7;">
+    © <%= new Date().getFullYear() %> NamoCoins Store • Created by <b>Indrayan</b>
+  </div>
+
+</footer>
+
+</body>
+</html>
